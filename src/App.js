@@ -1,20 +1,36 @@
 import React, {lazy, Suspense} from 'react';
-import {BrowserRouter as Router,Route, Switch} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Menu from './Components/Menu';
+import {AuthProvider} from './Components/Auth';
+import { RequireAuth } from './Components/RequireAuth';
 
-const Home = lazy(() => import('./Components/Home'));
-const Brand = lazy(() => import('./Components/Brand'));
+import Home from './Components/Home';
+import Brand from './Components/Brand';
+import Login from './Components/Login';
 
 const App = () => {
     return <div className="App">
         <Router>
+            <AuthProvider>
             <Menu />
-            <Switch>
-                <Suspense fallback={<div>loading...</div>}>
-                    <Route exact path='/home' component={Home}/>
-                    <Route exact path='/brand' component={Brand}/>
-                </Suspense>
-            </Switch>
+            <Routes>
+                {/* <Suspense fallback={<div>loading...</div>}> */}
+                    {/* <Route exact path='/home' component={Home}/> */}
+                    <Route path="/" exact element={<Home/>} />
+                    <Route path="/home" element={<Home />} exact />
+                    <Route
+                        path='/brand'
+                        element={
+                            <RequireAuth>
+                            <Brand />
+                            </RequireAuth>
+                        }
+                    />
+                    {/* <RequireAuth exact path='/brand' component={Brand}/> */}
+                    <Route exact path='/login' element={<Login />}/>
+                {/* </Suspense> */}
+            </Routes>
+            </AuthProvider>
         </Router>
     </div>
 }
